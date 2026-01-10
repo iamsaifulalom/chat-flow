@@ -6,8 +6,8 @@ import registerChatSocket from '../sockets/chat.socket.js';
 
 const PORT = process.env.PORT || 5000;
 
-export function startServer() {
-    const app = createApp();
+export async function startServer() {
+    const app = await createApp();
 
     const httpServer = createServer(app);
 
