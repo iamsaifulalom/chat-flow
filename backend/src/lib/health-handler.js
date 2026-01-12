@@ -1,4 +1,5 @@
-// FILE: src/lib/handlers.js
+// FILE: src/lib/health-handler.js
+
 export async function healthHandler(req, res) {
     try {
         res.status(200).json({
