@@ -3,9 +3,8 @@
 import 'dotenv/config';
 import bcrypt from 'bcrypt';
 
-// import { userRepo } from '../users/user.repo.js';
 import { sanitizeUser } from '../user/user.sanitizer.js';
-// import { generateAccessToken } from './auth.tokens.js';
+import { generateAccessToken } from './auth.tokens.js';
 import { AppError } from '../../core/app-error.js';
 import { userRepository } from '../user/user.repository.js';
 
@@ -19,8 +18,9 @@ export const AuthService = {
     // },
 
     async register(data) {
-        const existingUser = await userRepository.findByEmail(data.email);
-        
+        const existingUser = await userRepository
+            .findByVerifiedEmail(data.email);
+
         if (existingUser) {
             throw new AppError('Email already registered', 409);
         }
@@ -36,28 +36,26 @@ export const AuthService = {
         return sanitizeUser(newUser);
     },
 
-    // async login({ email, password }) {
-    //     const user = await userRepo.findByEmail(email);
-    //     if (!user) {
-    //         throw new AppError('User not found', 404);
-    //     }
+    async login({ email, password }) {
+        const user = await userRepository
+            .findByVerifiedEmail(email);
 
-    //     const isValidPassword = await bcrypt.compare(
-    //         password,
-    //         user.password
-    //     );
+        if (!user) {
+            throw new AppError('User not found', 404);
+        }
 
-    //     if (!isValidPassword) {
-    //         throw new AppError('Invalid credentials', 401);
-    //     }
+        const isValidPassword = await bcrypt.compare(
+            password,
+            user.password
+        );
 
-    //     const token = generateAccessToken({
-    //         id: user._id,
-    //         name: user.name,
-    //         role: user.role,
-    //         email: user.email,
-    //     });
+        if (!isValidPassword) {
+            throw new AppError('Invalid credentials', 401);
+        }
 
-    //     return { accessToken: token };
-    // },
+        const publicUser = sanitizeUser(user);
+        const token = generateAccessToken(publicUser);
+
+        return { accessToken: token, user: publicUser };
+    },
 };

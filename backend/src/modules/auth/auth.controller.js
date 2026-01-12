@@ -34,19 +34,19 @@ export const authController = {
         }
     },
 
-    // async signIn(req, res, next) {
-    //     try {
-    //         const credentials = await AuthService.login(req.body);
+    async signIn(req, res, next) {
+        try {
+            const data = await AuthService.login(req.body);
 
-    //         sendResponse({
-    //             res,
-    //             statusCode: 200,
-    //             success: true,
-    //             message: 'Sign in successful',
-    //             data: credentials,
-    //         });
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // },
+            sendResponse({
+                res,
+                statusCode: 200,
+                success: true,
+                message: 'Sign in successful',
+                data,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 };

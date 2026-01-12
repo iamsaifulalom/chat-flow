@@ -14,8 +14,11 @@ export const userRepository = {
     },
 
     // Find a user by email
-    findByEmail: async (email) => {
-        return User.findOne({ email });
+    findByVerifiedEmail: async (email) => {
+        return User.findOne({
+            email,
+            isVerified: true
+        });
     },
 
     // Update a user by ID
