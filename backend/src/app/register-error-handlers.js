@@ -4,6 +4,6 @@ import { errorBoundary } from "../infrastructure/http/middlewares/error-boundary
 import { notFoundHandler } from "../infrastructure/http/middlewares/not-found.js";
 
 export function registerErrorHandlers(app) {
-    app.use(notFoundHandler);   // <-- after all routes
-    app.use(errorBoundary);     // <-- after all routes
+    app.use(notFoundHandler); 
+    app.use(errorBoundary);
 }
