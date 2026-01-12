@@ -1,3 +1,5 @@
+// FILE: src/app/chat.socket.js
+
 export default function registerChatSocket(io) {
   io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
