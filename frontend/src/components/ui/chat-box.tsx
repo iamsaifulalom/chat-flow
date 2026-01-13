@@ -4,7 +4,7 @@ import {
     InputGroupButton,
     InputGroupTextarea
 } from './input-group';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Plus } from 'lucide-react';
 
 export default function ChatBox() {
     return (
@@ -12,8 +12,12 @@ export default function ChatBox() {
             <InputGroupTextarea
                 placeholder='Lets chat with me.'
             />
-            <InputGroupAddon align="block-end" className='flex justify-end'>
-                <InputGroupButton className="rounded-full" variant="default" size="icon-xs">
+            <InputGroupAddon align="block-end" className='flex justify-between'>
+                <InputGroupButton className="rounded-full" variant="secondary" size="icon-sm">
+                    <Plus />
+                    <span className="sr-only">Add files</span>
+                </InputGroupButton>
+                <InputGroupButton className="rounded-full" variant="default" size="icon-sm">
                     <ArrowUp />
                     <span className="sr-only">Send</span>
                 </InputGroupButton>
