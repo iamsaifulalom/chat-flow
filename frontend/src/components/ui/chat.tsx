@@ -7,13 +7,18 @@ import {
 import { ArrowUp, Plus } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Headset } from "lucide-react";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 export type ChatMessageProps = {
-  id: number
-  text: string
-  isAgent: boolean
-  time: string
+    id: number
+    text: string
+    isAdmin: boolean
+    time: string
+}
+
+type ChatInputProps = {
+    onSend?: () => void
+    onTextChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 
 export function Chat({ children }: { children: ReactNode }) {
@@ -24,48 +29,90 @@ export function Chat({ children }: { children: ReactNode }) {
     )
 }
 
-export function ChatHeader({ isOnline }: { isOnline?: boolean }) {
-    return (
-        <div className="border-b h-16 flex justify-between gap-2 items-center p-4">
-            <Headset size={20} />
-            <div className="flex-1">
-                <h1 className="text-sm">Suport agent</h1>
-                <div className="flex gap-1">
-                    <div className={cn(
-                        "size-3 rounded-full",
-                        isOnline ? "bg-green-400" : "bg-gray-300"
-                    )} />
-                    <p className="text-xs">{isOnline ? "Online" : "Offline"}</p>
-                </div>
-            </div>
-        </div>
-    )
+interface ChatHeaderProps {
+  isOnline?: boolean;
+  queueCount?: number;
 }
 
-export function ChatMessageList({ children }: { children?: ReactNode }) {
+export function ChatHeader({ isOnline, queueCount = 10 }: ChatHeaderProps) {
+  return (
+    <div className="border-b h-16 flex justify-between gap-2 w-full items-center p-4">
+      {/* Left: Agent info */}
+      <div className="flex gap-3 items-center">
+        <Headset size={20} />
+        <div>
+          <h1 className="text-sm">Support Agent</h1>
+          <div className="flex gap-1 items-center">
+            <div
+              className={cn(
+                "size-3 rounded-full",
+                isOnline ? "bg-green-400" : "bg-gray-300"
+              )}
+            />
+            <p className="text-xs">{isOnline ? "Online" : "Offline"}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right: Queue indicator */}
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-medium">
+          {queueCount} in queue
+        </p>
+        {/* Optional: small badge */}
+        {queueCount > 0 && (
+          <span className="w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full">
+            {queueCount}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessageProps[] }) {
     return (
         <div className='flex-1 overflow-y-auto space-y-3 p-4'>
-            {children}
-        </div>
-    )
-}
-export function ChatMessage({ isAgent , text , time}: ChatMessageProps) {
-    return (
-        <div className={cn(
-            'flex-1 overflow-y-auto w-[80%]',
-            isAgent ? "ml-auto" : ""
-        )}>
-            <p className='p-2 bg-muted text-sm rounded-sm'>{text}</p>
-            <p className='text-xs text-muted-foreground mt-1'>{time}</p>
+
+            {/* render chat history with proper alignment */}
+            {chatMessages?.map(({ isAdmin, text, time, id }) => (
+                <div
+                    key={id}
+                    className={cn(
+                        'flex-1 overflow-y-auto w-[80%]',
+                        isAdmin ? "" : "ml-auto"
+                    )}
+                >
+                    <p className={cn(
+                        'p-2 text-sm rounded-sm',
+                        isAdmin ? "bg-muted" : "bg-accent-foreground text-white"
+                    )}>
+                        {text}
+                    </p>
+                    <p className={cn(
+                        'text-xs text-muted-foreground mt-1',
+                        isAdmin ? "" : "text-right"
+                    )}>
+                        {time}
+                    </p>
+                </div>
+            ))}
         </div>
     )
 }
 
-export function ChatInput() {
+export function ChatInput({ onSend, onTextChange }: ChatInputProps) {
     return (
         <div className='px-4 pb-4'>
             <InputGroup className='max-h-40'>
                 <InputGroupTextarea
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey && onSend) {
+                            e.preventDefault();
+                            onSend();
+                        }
+                    }}
+                    onChange={onTextChange}
                     placeholder='Lets chat with me.'
                 />
                 <InputGroupAddon align="block-end" className='flex justify-between'>
@@ -73,7 +120,7 @@ export function ChatInput() {
                         <Plus />
                         <span className="sr-only">Add files</span>
                     </InputGroupButton>
-                    <InputGroupButton className="rounded-full" variant="default" size="icon-sm">
+                    <InputGroupButton onClick={onSend} className="rounded-full" variant="default" size="icon-sm">
                         <ArrowUp />
                         <span className="sr-only">Send</span>
                     </InputGroupButton>

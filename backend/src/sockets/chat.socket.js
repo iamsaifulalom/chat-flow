@@ -1,35 +1,31 @@
 // FILE: src/app/chat.socket.js
 
+const users = new Map(); // userId -> socketId
+
 export default function registerChatSocket(io) {
+  io.use((socket, next) => {
+    const auth = socket.handshake.auth;
+    console.log(auth)
+    socket.userId = "user id"
+    next()
+  });
+
   io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
 
-    socket.on("join-chat", ({ chatId }) => {
-      socket.join(chatId);
-    });
+    // map userid with socket id to send response a specific user.
+    users.set(socket.userId, socket.id);
 
-    socket.on("visitor-message", async ({ chatId, text }) => {
-      // TODO: save message to DB here
+    console.log(users);
 
-      io.to(chatId).emit("new-message", {
-        sender: "visitor",
-        text,
-        createdAt: new Date(),
-      });
-    });
 
-    socket.on("admin-message", async ({ chatId, text }) => {
-      // TODO: save message to DB here
-
-      io.to(chatId).emit("new-message", {
-        sender: "admin",
-        text,
-        createdAt: new Date(),
-      });
+    // Send a message to a chat
+    socket.on("chat:message", (chat) => {
+      console.log(chat)
     });
 
     socket.on("disconnect", () => {
-      console.log("Socket disconnected:", socket.id);
+      users.delete(socket.userId);
     });
   });
-};
+}
+
