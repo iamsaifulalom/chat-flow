@@ -1,55 +1,34 @@
-"use client";
+import { useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
-import { useEffect, useState } from "react";
-import { getSocket } from "../lib/socket";
+export function useChat(token?: string) {
+  const socketRef = useRef<Socket | null>(null)
+  const [message, setMessage] = useState("")
 
-export type Message = {
-  sender: "visitor" | "admin";
-  text: string;
-  createdAt: string;
-};
-
-export const useChat = (chatId: string | null) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const socket = getSocket();
-
-  // Ensure visitorId
-  const visitorId =
-    typeof window !== "undefined"
-      ? localStorage.getItem("visitorId") || crypto.randomUUID()
-      : "unknown";
-
-  if (typeof window !== "undefined") localStorage.setItem("visitorId", visitorId);
-
-  // Listen + join room
   useEffect(() => {
-    if (!chatId) return;
+    const socketServer = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
-    socket.emit("join-chat", { chatId, visitorId });
+    const socket: Socket = io(socketServer, {
+      auth: { authToken: token || "JWT token" },
+      transports: ["websocket"]
+    });
 
-    const handleNewMessage = (msg: Message) => {
-      setMessages((prev) => [...prev, msg]);
-    };
-
-    socket.on("new-message", handleNewMessage);
+    socketRef.current = socket;
 
     return () => {
-      socket.off("new-message", handleNewMessage);
-    };
-  }, [chatId, visitorId, socket]);
+      socket.disconnect();
+    }
+  }, [])
 
-  const sendMessage = (text: string) => {
-    if (!chatId || !text) return;
+  function sendMessage() {
+    if (!socketRef.current || !message) return;
 
-    const msg: Message = {
-      sender: "visitor",
-      text,
-      createdAt: new Date().toISOString(),
-    };
+    socketRef.current.emit("chat:message", {
+      text: message,
+      sendTo: "ADMIN",
+      sendFrom: "USER ID"
+    })
+  }
 
-    setMessages((prev) => [...prev, msg]);
-    socket.emit("visitor-message", { chatId, text });
-  };
-
-  return { messages, sendMessage, visitorId };
-};
+  return { sendMessage, setMessage }
+}

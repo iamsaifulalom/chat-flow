@@ -1,5 +1,3 @@
-// FILE: src/modules/auth/auth.validator.js
-
 import { z } from 'zod';
 
 export const SignUpSchema = z.object({
@@ -9,3 +7,6 @@ export const SignUpSchema = z.object({
 })
 
 export const SignInSchema = SignUpSchema.omit({ name: true })
+
+export type SignInBody = z.infer<typeof SignInSchema>
+export type SignUpBody = z.infer<typeof SignUpSchema>

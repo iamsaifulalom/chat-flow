@@ -5,27 +5,27 @@ import { connect } from 'mongoose'
 vi.mock('mongoose', () => ({ connect: vi.fn() }))
 
 describe('connectDB', () => {
-  let consoleSpy
+    let consoleSpy
 
-  beforeEach(() => {
-    consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-  })
+    beforeEach(() => {
+        consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { })
+    })
 
-  afterEach(() => {
-    vi.restoreAllMocks()
-  })
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
 
-  it('logs success when DB connects', async () => {
-    connect.mockResolvedValueOnce(true)
-    await connectDB()
-    expect(connect).toHaveBeenCalledWith(process.env.DATABASE_URL)
-    expect(consoleSpy).toHaveBeenCalledWith("Database connection success.")
-  })
+    it('logs success when DB connects', async () => {
+        connect.mockResolvedValueOnce(true)
+        await connectDB()
+        expect(connect).toHaveBeenCalledWith(process.env.DATABASE_URL)
+        expect(consoleSpy).toHaveBeenCalledWith("Database connection success.")
+    })
 
-  it('logs failure when DB fails', async () => {
-    connect.mockRejectedValueOnce(new Error('Failed'))
-    await connectDB()
-    expect(connect).toHaveBeenCalledWith(process.env.DATABASE_URL)
-    expect(consoleSpy).toHaveBeenCalledWith("DB connection failed!")
-  })
+    it('logs failure when DB fails', async () => {
+        connect.mockRejectedValueOnce(new Error('Failed'))
+        await connectDB()
+        expect(connect).toHaveBeenCalledWith(process.env.DATABASE_URL)
+        expect(consoleSpy).toHaveBeenCalledWith("DB connection failed!")
+    })
 })

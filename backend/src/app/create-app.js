@@ -4,14 +4,16 @@ import express from 'express';
 import { registerRoutes } from './register-routes.js';
 import { registerMiddlewares } from './register-middlewares.js';
 import { connectDB } from '../infrastructure/database/connect-db.js';
+import { registerErrorHandlers } from './register-error-handlers.js';
 
 export async function createApp() {
-    const app = express()
+    const app = express();
 
-   await connectDB()
+    await connectDB();
 
-   registerMiddlewares(app)
-   registerRoutes(app)
-    
-    return app
+    registerMiddlewares(app);
+    registerRoutes(app);
+    registerErrorHandlers(app);
+
+    return app;
 }

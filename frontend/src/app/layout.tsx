@@ -1,11 +1,16 @@
+import { Toaster } from "sonner";
 import "./globals.css";
+import { AuthProvider } from "@/providers/auth-provider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body >
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body >
+                <AuthProvider>
+                    {children}
+                </AuthProvider>
+                <Toaster richColors/>
+            </body>
+        </html>
+    );
 }
