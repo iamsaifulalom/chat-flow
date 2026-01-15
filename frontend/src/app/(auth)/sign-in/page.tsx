@@ -1,7 +1,7 @@
-import React from 'react'
+import SignInForm from '@/components/auth/auth-form'
 
 export default function LogIn() {
   return (
-    <div>LogIn</div>
+   <SignInForm/>
   )
 }

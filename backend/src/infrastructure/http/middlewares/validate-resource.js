@@ -1,3 +1,4 @@
+import { sendResponse } from "../../../core/send-response.js";
 
 export const validateResource = (schema, key = "body") => (req, res, next) => {
 
@@ -8,11 +9,13 @@ export const validateResource = (schema, key = "body") => (req, res, next) => {
         const pathName = issue?.path?.[0] ?? "unknown";
         const message = issue?.message ?? "Invalid value";
 
-        return res.status(400).json({
+        sendResponse({
+            res,
+            statusCode: 400,
             success: false,
             message: "Validation failed",
-            error: `${pathName}: ${message}`,
-        });
+            data: `${pathName}: ${message}`
+        })
     }
 
     req[key] = result.data;

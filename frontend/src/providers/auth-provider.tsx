@@ -65,16 +65,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const token = res.data.accessToken;
             localStorage.setItem("accessToken", token);
 
-            console.log(res.data)
             setUser(res.data.data);
 
             toast.success(res.message);
             router.push(res.data.data.role === "ADMIN" ? "/admin/chat" : "/");
         } catch (err) {
+
+            let errMessage = "Something went wrong."
             if (isAxiosError(err)) {
-                toast.error(err?.response?.data?.message || "Login failed");
+                errMessage = err?.response?.data?.message || "Login failed"
             }
-            toast.error("Something went wrong!")
+            toast.error(errMessage)
         }
     };
 
