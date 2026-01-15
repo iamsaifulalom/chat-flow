@@ -6,7 +6,7 @@ const UserSchema = new Schema({
     password: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
-    role: { type: String, enum: ["admin", "user"], default: "user" },
+    role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
 }, { versionKey: false });
 
 export const User = model("User", UserSchema);

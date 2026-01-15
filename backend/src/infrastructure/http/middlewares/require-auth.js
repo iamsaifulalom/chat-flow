@@ -1,5 +1,6 @@
 import JWT from 'jsonwebtoken';
-import { AppError } from '../utils/app-error.js';
+import { AppError } from '../../../core/app-error.js';
+import { verifyAccessToken } from '../../../modules/auth/auth.tokens.js';
 
 export function requireAuth() {
     return (req, res, next) => {
@@ -16,7 +17,7 @@ export function requireAuth() {
                 throw new AppError("Invalid authorization format", 401);
             }
 
-            const decodedData = JWT.verify(token, process.env.JWT_SECRET);
+            const decodedData = verifyAccessToken(token);
             req.user = decodedData;
 
             next()

@@ -1,26 +1,23 @@
 import { Path } from "react-hook-form";
-import { SignInBody } from "../schema/auth.schema";
-import { SignUpBody } from "../schema/auth.schema";
+import { SignInBody, SignUpBody } from "../schema/auth.schema";
 
-interface SignInItem {
-    name: Path<SignInBody>;
+// 1. Create a Generic Interface to handle any form body type
+interface AuthField<T> {
+    name: Path<T>;
     type: React.HTMLInputTypeAttribute;
     placeholder?: string;
-    label: string
+    label: string;
 }
-export const SignIn: SignInItem[] = [
-    { name: "email", type: "text", placeholder: "example@user.com" , label: "Email"},
-    { name: "password", type: "password", placeholder: "Password" , label: "Password"},
+
+// 2. Define the Sign In configuration
+export const SignInFields: AuthField<SignInBody>[] = [
+    { name: "email", type: "email", placeholder: "example@user.com", label: "Email" },
+    { name: "password", type: "password", placeholder: "Password", label: "Password" },
 ];
 
-
-interface SignUpItem {
-    name: Path<SignUpBody>;
-    type: React.HTMLInputTypeAttribute;
-    placeholder?: string;
-}
-export const SignUp: SignUpItem[] = [
-    { name: "name", type: "text", placeholder: "Jon Doe"},
-    { name: "email", type: "text", placeholder: "example@user.com"},
-    { name: "password", type: "password", placeholder: "Password" },
+// 3. Define the Sign Up configuration
+export const SignUpFields: AuthField<SignUpBody>[] = [
+    { name: "name", type: "text", placeholder: "John Doe", label: "Full Name" },
+    { name: "email", type: "email", placeholder: "example@user.com", label: "Email" },
+    { name: "password", type: "password", placeholder: "Password", label: "Password" },
 ];

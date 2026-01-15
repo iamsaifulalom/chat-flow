@@ -10,3 +10,7 @@ export const generateAccessToken = (payload) => {
         expiresIn: JWT_EXPIRES_IN ,
     });
 };
+
+export const verifyAccessToken = (token) => {
+    return jwt.verify(token , JWT_SECRET);
+};
