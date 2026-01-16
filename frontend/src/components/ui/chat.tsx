@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Headset } from "lucide-react";
 import React, { ReactNode } from "react";
 import AutoScroll from './auto-scroll';
+import { useAuth } from '@/providers/auth-provider';
 
 export type ChatMessageProps = {
     id: number
@@ -32,47 +33,50 @@ export function Chat({ children }: { children: ReactNode }) {
 }
 
 interface ChatHeaderProps {
-  isOnline?: boolean;
-  queueCount?: number;
+    isOnline?: boolean;
+    queueCount?: number;
 }
 
 export function ChatHeader({ isOnline, queueCount = 10 }: ChatHeaderProps) {
-  return (
-    <div className="border-b h-16 flex justify-between gap-2 w-full items-center p-4">
-      {/* Left: Agent info */}
-      <div className="flex gap-3 items-center">
-        <Headset size={20} />
-        <div>
-          <h1 className="text-sm">Support Agent</h1>
-          <div className="flex gap-1 items-center">
-            <div
-              className={cn(
-                "size-3 rounded-full",
-                isOnline ? "bg-green-400" : "bg-gray-300"
-              )}
-            />
-            <p className="text-xs">{isOnline ? "Online" : "Offline"}</p>
-          </div>
-        </div>
-      </div>
+    return (
+        <div className="border-b h-16 flex justify-between gap-2 w-full items-center p-4">
+            {/* Left: Agent info */}
+            <div className="flex gap-3 items-center">
+                <Headset size={20} />
+                <div>
+                    <h1 className="text-sm">Support Agent</h1>
+                    <div className="flex gap-1 items-center">
+                        <div
+                            className={cn(
+                                "size-3 rounded-full",
+                                isOnline ? "bg-green-400" : "bg-gray-300"
+                            )}
+                        />
+                        <p className="text-xs">{isOnline ? "Online" : "Offline"}</p>
+                    </div>
+                </div>
+            </div>
 
-      {/* Right: Queue indicator */}
-      <div className="flex items-center gap-2">
-        <p className="text-sm font-medium">
-          {queueCount} in queue
-        </p>
-        {/* Optional: small badge */}
-        {queueCount > 0 && (
-          <span className="w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full">
-            {queueCount}
-          </span>
-        )}
-      </div>
-    </div>
-  );
+            {/* Right: Queue indicator */}
+            <div className="flex items-center gap-2">
+                <p className="text-sm font-medium">
+                    {queueCount} in queue
+                </p>
+                {/* Optional: small badge */}
+                {queueCount > 0 && (
+                    <span className="w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full">
+                        {queueCount}
+                    </span>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessageProps[] }) {
+
+    const { user } = useAuth()
+
     return (
         <div className='flex-1 overflow-y-auto space-y-3 p-4'>
 
@@ -82,12 +86,12 @@ export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessagePr
                     key={id}
                     className={cn(
                         'flex-1 overflow-y-auto w-[80%]',
-                        role === "ADMIN" ? "" : "ml-auto"
+                        role === user?.role ? "ml-auto" : ""
                     )}
                 >
                     <p className={cn(
                         'p-2 text-sm rounded-sm',
-                        role === "ADMIN" ? "bg-muted" : "bg-accent-foreground text-white"
+                        role === user?.role ? "bg-accent-foreground text-white" : "bg-muted"
                     )}>
                         {contents}
                     </p>
@@ -100,12 +104,12 @@ export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessagePr
                 </div>
             ))}
 
-            <AutoScroll deps={[chatMessages]}/>
+            <AutoScroll deps={[chatMessages]} />
         </div>
     )
 }
 
-export function ChatInput({ onSend, onTextChange  , value}: ChatInputProps) {
+export function ChatInput({ onSend, onTextChange, value }: ChatInputProps) {
     return (
         <div className='px-4 pb-4'>
             <InputGroup className='max-h-40'>

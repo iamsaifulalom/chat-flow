@@ -10,10 +10,12 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import { useRequireAuth } from '@/providers/auth-provider';
 import { CircleUserRound, MessageCircle, Settings } from 'lucide-react';
+import { useChat } from '@/hooks/use-chat';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     
     const { loading } = useRequireAuth("ADMIN");
+    useChat("")
 
     if (loading) {
         return (

@@ -1,12 +1,11 @@
 // FILE: src/server/start-server.js
 
-import 'dotenv/config';
 import { createApp } from "../app/create-app.js";
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import registerChatSocket from '../sockets/chat.socket.js';
+import { env } from "../config/env.js";
 
-const PORT = process.env.PORT || 5000;
 
 export async function startServer() {
     const app = await createApp();
@@ -21,7 +20,7 @@ export async function startServer() {
     });
     registerChatSocket(io);
 
-    httpServer.listen(PORT, () => {
-        console.log(`Server listen on port ${PORT}`)
+    httpServer.listen(env.PORT, () => {
+        console.log(`Server listen on port ${env.PORT}`)
     })
 }
