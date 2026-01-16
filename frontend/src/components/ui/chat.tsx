@@ -11,14 +11,15 @@ import React, { ReactNode } from "react";
 
 export type ChatMessageProps = {
     id: number
-    text: string
-    isAdmin: boolean
+    contents: string
+    role: "ADMIN" | "USER",
     time: string
 }
 
 type ChatInputProps = {
     onSend?: () => void
-    onTextChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+    onTextChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void,
+    value: string
 }
 
 export function Chat({ children }: { children: ReactNode }) {
@@ -75,23 +76,23 @@ export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessagePr
         <div className='flex-1 overflow-y-auto space-y-3 p-4'>
 
             {/* render chat history with proper alignment */}
-            {chatMessages?.map(({ isAdmin, text, time, id }) => (
+            {chatMessages?.map(({ role, contents, time, id }) => (
                 <div
                     key={id}
                     className={cn(
                         'flex-1 overflow-y-auto w-[80%]',
-                        isAdmin ? "" : "ml-auto"
+                        role === "ADMIN" ? "" : "ml-auto"
                     )}
                 >
                     <p className={cn(
                         'p-2 text-sm rounded-sm',
-                        isAdmin ? "bg-muted" : "bg-accent-foreground text-white"
+                        role === "ADMIN" ? "bg-muted" : "bg-accent-foreground text-white"
                     )}>
-                        {text}
+                        {contents}
                     </p>
                     <p className={cn(
                         'text-xs text-muted-foreground mt-1',
-                        isAdmin ? "" : "text-right"
+                        role === "ADMIN" ? "" : "text-right"
                     )}>
                         {time}
                     </p>
@@ -101,7 +102,7 @@ export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessagePr
     )
 }
 
-export function ChatInput({ onSend, onTextChange }: ChatInputProps) {
+export function ChatInput({ onSend, onTextChange  , value}: ChatInputProps) {
     return (
         <div className='px-4 pb-4'>
             <InputGroup className='max-h-40'>
@@ -112,6 +113,7 @@ export function ChatInput({ onSend, onTextChange }: ChatInputProps) {
                             onSend();
                         }
                     }}
+                    value={value}
                     onChange={onTextChange}
                     placeholder='Lets chat with me.'
                 />

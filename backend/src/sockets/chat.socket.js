@@ -1,31 +1,65 @@
-// FILE: src/app/chat.socket.js
+import { verifyAccessToken } from '../modules/auth/auth.tokens.js';
 
-const users = new Map(); // userId -> socketId
+const ADMIN_STATUS = new Set();
 
 export default function registerChatSocket(io) {
   io.use((socket, next) => {
-    const auth = socket.handshake.auth;
-    console.log(auth)
-    socket.userId = "user id"
-    next()
+    const token = socket.handshake.auth.accessToken;
+    if (!token) return next(new Error("Unauthorized"));
+
+    try {
+      socket.user = verifyAccessToken(token);
+      next();
+    } catch {
+      next(new Error("Invalid token"));
+    }
   });
 
   io.on("connection", (socket) => {
+    const { id, role } = socket.user;
 
-    // map userid with socket id to send response a specific user.
-    users.set(socket.userId, socket.id);
+    if (role === "ADMIN") {
+      socket.join("ADMIN");
+      ADMIN_STATUS.add(id);
+      io.emit("admin:status", { online: true });
 
-    console.log(users);
+    } else {
+      socket.join(id);
+      console.log(id)
+    }
 
+    socket.on("chat:message", (data) => {
+      const { contents, sendTo } = data;
 
-    // Send a message to a chat
-    socket.on("chat:message", (chat) => {
-      console.log(chat)
+      const message = {
+        contents,
+        from: id,
+        role,
+        time: Date.now(),
+        id: Date.now(),
+      };
+
+      // send to sender itself
+      socket.emit("chat:message", message);
+
+      // send to the other side
+      if (role === "ADMIN") {
+        io.to(sendTo).emit("chat:message", message); // ADMIN → USER
+      } else {
+        io.to("ADMIN").emit("chat:message", message); // USER → ADMIN
+      }
     });
 
+    
     socket.on("disconnect", () => {
-      users.delete(socket.userId);
-    });
-  });
-}
+      if (role === "ADMIN") {
+        ADMIN_STATUS.delete(id);
 
+        io.emit("admin:status", { online: ADMIN_STATUS.size > 0 });
+      }
+    });
+
+  });
+
+
+}
