@@ -3,8 +3,8 @@
 import { createApp } from "../app/create-app.js";
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import registerChatSocket from '../sockets/chat.socket.js';
 import { env } from "../config/env.js";
+import registerChatSocket from "../modules/chat/chat.socket.js";
 
 
 export async function startServer() {

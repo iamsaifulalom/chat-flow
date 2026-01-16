@@ -1,9 +1,8 @@
-import JWT from 'jsonwebtoken';
 import { AppError } from '../../../core/app-error.js';
 import { verifyAccessToken } from '../../../modules/auth/auth.tokens.js';
 
 export function requireAuth() {
-    return (req, res, next) => {
+    return (req, _res, next) => {
         try {
             const authHeader = req.headers.authorization;
 

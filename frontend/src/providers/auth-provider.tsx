@@ -61,7 +61,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const res = await signIn(data);
             const token = res.data.data.accessToken;
-            console.log(token)
             localStorage.setItem("accessToken", token);
 
             setUser(res.data.data.user);

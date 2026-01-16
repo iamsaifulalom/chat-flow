@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 interface AutoScrollProps {
-  deps?: any[]; // dependencies to trigger scroll
+  deps?: any[];
 }
 
 export default function AutoScroll({ deps = [] }: AutoScrollProps) {
@@ -12,7 +12,7 @@ export default function AutoScroll({ deps = [] }: AutoScrollProps) {
     if (!parent) return;
 
     parent.scrollTop = parent.scrollHeight;
-  }, deps);
+  }, [...deps]);
 
   return <div ref={elRef} />; // empty div acts as anchor
 }
