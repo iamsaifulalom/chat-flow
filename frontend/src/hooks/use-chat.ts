@@ -45,7 +45,7 @@ export function useChat(sendTo: string) {
       sendTo,
     });
 
-    setMessage(""); // clear input
+    setMessage("");
   }
 
   return { sendMessage, setMessage, messages, message , adminOnline};

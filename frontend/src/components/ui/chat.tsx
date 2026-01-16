@@ -8,6 +8,7 @@ import { ArrowUp, Plus } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Headset } from "lucide-react";
 import React, { ReactNode } from "react";
+import AutoScroll from './auto-scroll';
 
 export type ChatMessageProps = {
     id: number
@@ -98,6 +99,8 @@ export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessagePr
                     </p>
                 </div>
             ))}
+
+            <AutoScroll deps={[chatMessages]}/>
         </div>
     )
 }
