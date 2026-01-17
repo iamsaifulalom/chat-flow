@@ -14,13 +14,8 @@ export const chatRepository = {
         return messages
     },
 
-    addMessage: async (chatId, message) => {
-        console.log("Adding message to chat:", chatId, message);
-        return await Message.create({
-             chatId, 
-             contents: message.contents,
-             role: message.role,
-             
-             })
+    addMessage: async ({ chatId, contents , role}) => {
+        console.log("Adding message to chat:", chatId);
+        return await Message.create({ chatId , contents , role })
     }
 }

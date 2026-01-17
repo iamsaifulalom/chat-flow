@@ -1,9 +1,11 @@
 import { getActiveChatHistory } from "@/api/api.chat";
 import { env } from "@/config/env";
+import { useAuth } from "@/providers/auth-provider";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 
-export function useChat(sendTo?: string) {
+export function useChat() {
+  const { user } = useAuth()
   const socketRef = useRef<Socket | null>(null);
   const [message, setMessage] = useState("");
   const [chatId, setChatId] = useState("");
@@ -21,22 +23,19 @@ export function useChat(sendTo?: string) {
     });
     socketRef.current = socket;
 
-    getActiveChatHistory(token)
-      .then((data) => { console.log(data) })
-      .catch(err => { console.log(err) })
-      .finally(() => { })
+    async function getChatHistory() {
+      const { data } = await getActiveChatHistory(token);
+      setChatId(data.data.chatId)
+      console.log(data.data.history)
+      setMessages(data.data.history)
 
-    // --- Subscriptions ---
-    socket.on("chat:history", (data) => {
-      setChatId(data.chatId);
-      setMessages(data.messages || []);
-    });
+    }
+    getChatHistory()
 
     socket.on("chat:message", (msg) => {
       setMessages(prev => prev.some(m => m.id === msg.id) ? prev : [...prev, msg]);
     });
 
-    socket.on("admin:status", ({ online }) => setAdminOnline(online));
 
     socket.on("admin:chat_list_update", (data) => {
       setChatList(prev => {
@@ -57,11 +56,11 @@ export function useChat(sendTo?: string) {
 
     socketRef.current.emit("chat:message", {
       contents: message,
-      sendTo: sendTo || "ADMIN",
-      chatId
+      chatId,
+      role: user?.role
     });
     setMessage("");
-  }, [message, sendTo, chatId]);
+  }, [message, chatId]);
 
   return {
     sendMessage, setMessage, message,

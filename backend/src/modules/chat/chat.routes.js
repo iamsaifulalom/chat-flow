@@ -6,6 +6,11 @@ import { idParam } from '../../lib/validators/common.fields.js';
 
 const routes = Router()
 
+/**
+ * @description get chat history by user id.
+ * not chat id.
+ */
+
 routes.get(
     "/active",
     requireAuth(),

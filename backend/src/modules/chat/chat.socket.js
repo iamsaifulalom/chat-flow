@@ -1,5 +1,6 @@
 import { socketRequireAuth } from '../../infrastructure/http/middlewares/socket-require-auth.js';
 import { chatRepository } from './chat.repository.js';
+import { sanitizer } from './chat.sanitizer.js';
 
 const ADMIN_STATUS = new Set();
 
@@ -17,44 +18,32 @@ export default function registerChatSocket(io) {
       socket.join(ADMIN_ROOM);
       ADMIN_STATUS.add(id);
       io.emit("admin:status", { online: true });
-
-    } else {
-      // Find or create chat for USER on connect
-      const chat = await chatRepository.findOpenedChatByUserId(id)
-        || await chatRepository.createChatWithUserId(id);
-
-      const chatId = chat._id.toString();
-      socket.join(chatId);
-      const chatHistory = await chatRepository
-        .findChatHistoryByChatId(chatId)
-      socket.emit("chat:history", { messages: [...chatHistory], chatId });
     }
 
     // --- 2. Shared Message Handler ---
-    socket.on("chat:message", async ({ contents, chatId }) => {
-      const message = {
-        contents,
-        from: id,
-        role,
-        chatId
-      };
+    socket.on("chat:message", async (payload) => {
+      const { chatId, contents, role } = payload;
 
       // Save and Broadcast to the specific room
-      const chat = await chatRepository.addMessage(chatId, message);
-      console.log( "chat form after saving", chat)
-      io.to(chatId).emit("chat:message", chat);
-      socket.emit("chat:message", chat)
+      const chat = await chatRepository.addMessage({ chatId, contents, role });
+
+      const sanitizedChat = sanitizer(chat)
+
+      io.to(chatId).emit("chat:message", sanitizedChat);
+      
+      // send back to the user to update chat
+      socket.emit("chat:message", sanitizedChat)
 
       // If user is sending, notify the Admin sidebar
-      if (role === "USER") {
-        io.to(ADMIN_ROOM).emit("admin:chat_list_update", {
-          chatId,
-          userId: id,
-          name,
-          lastMessage: contents,
-          timestamp: message.time
-        });
-      }
+      // if (role === "USER") {
+      //   io.to(ADMIN_ROOM).emit("admin:chat_list_update", {
+      //     chatId,
+      //     userId: id,
+      //     name,
+      //     lastMessage: contents,
+      //     timestamp: message.time
+      //   });
+      // }
     });
 
     // --- 3. Management Listeners ---

@@ -15,6 +15,9 @@ export const ChatService = {
         const chatHistory = await chatRepository
             .findChatHistoryByChatId(chat._id);
 
-        return chatHistory;
+        /**
+         * @description replace _id with id for frontend
+         */
+        return { chatId: chat._id, history: chatHistory.map(sanitizer) };
     }
 }

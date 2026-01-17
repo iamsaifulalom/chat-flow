@@ -2,11 +2,10 @@ import { Schema, model } from "mongoose";
 
 const MessageSchema = new Schema({
     contents: { type: String, required: true },
-    // senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     role: { type: String, enum: ["USER", "ADMIN"], required: true },
     chatId: { type: Schema.Types.ObjectId },
     createdAt: { type: Date, default: Date.now },
-}, { _id: true });
+}, { _id: true , versionKey: false});
 
 const ChatSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },

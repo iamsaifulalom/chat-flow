@@ -90,7 +90,7 @@ export function ChatMessageList({ chatMessages }: { chatMessages?: ChatMessagePr
                     )}
                 >
                     <p className={cn(
-                        'p-2 text-sm rounded-sm',
+                        'p-2 text-sm rounded-sm wrap-break-word',
                         role === user?.role ? "bg-accent-foreground text-white" : "bg-muted"
                     )}>
                         {contents}
