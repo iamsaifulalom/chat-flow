@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { isAxiosError } from "axios";
 import { APIClientInstance } from "@/lib/api.instance";
 import { SignInBody } from "@/schema/auth.schema";
-import { singIn } from "@/api/api.auth";
+import { signIn } from "@/api/api.auth";
 
 export type User = {
     id: string;
@@ -44,12 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const res = await APIClientInstance.get("/auth/me", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-
                 setUser(res.data.data);
             } catch (err) {
 
                 console.log(err);
-                localStorage.removeItem("accessToken");
                 setUser(null);
             } finally {
                 setLoading(false);
@@ -61,11 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const signInUser = async (data: SignInBody) => {
         try {
-            const res = await singIn(data);
-            const token = res.data.accessToken;
+            const res = await signIn(data);
+            const token = res.data.data.accessToken;
             localStorage.setItem("accessToken", token);
 
-            setUser(res.data.data);
+            setUser(res.data.data.user);
 
             toast.success(res.message);
             router.push(res.data.data.role === "ADMIN" ? "/admin/chat" : "/");

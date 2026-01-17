@@ -5,8 +5,15 @@ import {
 } from '../../infrastructure/http/middlewares/validate-resource.js';
 import { SignInSchema, SignUpSchema } from './auth.validator.js';
 import { authController } from './auth.controller.js';
+import { requireAuth } from '../../infrastructure/http/middlewares/require-auth.js';
 
 const routes = Router();
+
+routes.get(
+    "/me", 
+    requireAuth(),
+    authController.getProfile
+)
 
 routes.post(
     "/signup", 

@@ -12,10 +12,10 @@ const SALT_ROUNDS = 10;
 
 export const AuthService = {
 
-    // getUserFromToken(payload) {
-    //     const { iat, exp, ...user } = payload;
-    //     return user;
-    // },
+    getUserFromToken(payload) {
+        const { iat, exp, ...user } = payload;
+        return user;
+    },
 
     async register(data) {
         const existingUser = await userRepository

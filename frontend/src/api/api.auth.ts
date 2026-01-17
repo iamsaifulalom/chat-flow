@@ -1,6 +1,10 @@
 import { APIClientInstance } from "@/lib/api.instance";
-import { SignInBody } from "@/schema/auth.schema";
+import { SignInBody, SignUpBody } from "@/schema/auth.schema";
 
-export async function singIn(data: SignInBody): Promise<any> {
+export async function signIn(data: SignInBody): Promise<any> {
     return APIClientInstance.post("/auth/signin", data);
 }
+export async function signUp(data: SignUpBody): Promise<any> {
+    return APIClientInstance.post("/auth/signup", data);
+}
+

@@ -2,21 +2,21 @@ import { sendResponse } from '../../core/send-response.js';
 import { AuthService } from './auth.service.js';
 
 export const authController = {
-    // getProfile(req, res, next) {
-    //     try {
-    //         const user = AuthService.getUserDetails(req.user);
+    getProfile(req, res, next) {
+        try {
+            const user = AuthService.getUserFromToken(req.user);
 
-    //         sendResponse({
-    //             res,
-    //             statusCode: 200,
-    //             success: true,
-    //             message: 'User profile fetched successfully',
-    //             data: user,
-    //         });
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // },
+            sendResponse({
+                res,
+                statusCode: 200,
+                success: true,
+                message: 'User profile fetched successfully',
+                data: user,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 
     async registerUser(req, res, next) {
         try {

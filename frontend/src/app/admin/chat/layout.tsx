@@ -2,13 +2,12 @@
 import ChatListItem from '@/components/chat-list-item'
 import ChatFilter from '@/components/chat/chat-filter'
 import { Sidebar, SidebarInset, SidebarProvider } from '@/components/sidebar/sidebar'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { CHAT_FILTERS } from '@/constants/chat-filters'
-import { Bookmark, Bubbles, History } from 'lucide-react'
+import { useChat } from '@/hooks/use-chat'
 import React from 'react'
 
 export default function ChatLayout({ children }: { children: React.ReactNode }) {
+  const {} =  useChat("")
     return (
         <SidebarProvider>
             <Sidebar className='w-80'>

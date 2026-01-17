@@ -8,7 +8,7 @@ import { useParams } from "next/navigation"
 
 export default function Chat() {
   const { chatId } = useParams();
-  const { sendMessage, setMessage } = useChat("Admin")
+  const { sendMessage, setMessage , messages , message} = useChat("69691b0bf0fa166252ed2213")
 
   return (
     <div className="flex flex-col h-dvh">
@@ -22,8 +22,14 @@ export default function Chat() {
       </header>
 
 
-      <ChatMessageList chatMessages={chatMessages} />
-      <ChatInput />
+      <ChatMessageList
+        chatMessages={messages}
+      />
+      <ChatInput
+      value={message}
+        onSend={sendMessage}
+        onTextChange={(e) => setMessage(e.target.value)}
+      />
     </div>
   )
 }

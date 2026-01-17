@@ -1,17 +1,19 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
+
+const MessageSchema = new Schema({
+    contents: { type: String, required: true },
+    role: { type: String, enum: ["USER", "ADMIN"], required: true },
+    chatId: { type: Schema.Types.ObjectId },
+    createdAt: { type: Date, default: Date.now },
+}, { _id: true , versionKey: false});
 
 const ChatSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    adminId: { type: Schema.Types.ObjectId, ref: "User", default: null },
-    status: { type: String, enum: ["open", "closed"], default: "open", },
-    createdAt: { type: Date, default: Date.now },
-    lastMessageAt: { type: Date, default: Date.now },
-}, { versionKey: false });
+    status: { type: String, enum: ["open", "closed"], default: "open" },
+}, { timestamps: true, versionKey: false });
 
+// Indexing for performance
+ChatSchema.index({ userId: 1, status: 1 });
 
-ChatSchema.methods.updateLastMessageAt = function () {
-    this.lastMessageAt = new Date();
-    return this.save();
-};
-
-export const Chat = mongoose.model("Chat", ChatSchema);
+export const Chat = model("Chat", ChatSchema);
+export const Message = model("Message", MessageSchema);

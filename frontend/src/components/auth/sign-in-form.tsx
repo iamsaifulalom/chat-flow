@@ -5,7 +5,7 @@ import { Button } from '../ui/button'
 import { Form } from '../ui/form'
 import InputField from '../ui/input-field'
 import { Spinner } from '../ui/spinner'
-import { SignIn } from '@/constants/auth.form'
+import { SignInFields } from '@/constants/auth.form'
 import { useSignIn } from '@/hooks/use-signin'
 
 export default function SignInForm() {
@@ -27,7 +27,7 @@ export default function SignInForm() {
                 <form>
                     <div className='flex flex-col gap-3'>
                         {/* form fields for sign in */}
-                        {SignIn.map((item) => (
+                        {SignInFields.map((item) => (
                             <InputField key={item.name} form={form} {...item} />
                         ))}
 
